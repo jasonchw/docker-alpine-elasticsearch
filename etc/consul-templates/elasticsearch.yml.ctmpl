@@ -15,14 +15,14 @@
 # Use a descriptive name for your cluster:
 #
 # cluster.name: my-application
-{{$clustername := env "ES_CLUSTER_NAME"}}{{ if ne $clustername "" }}cluster.name: {{ $clustername }}{{ end }}
+{{ $clustername := env "ES_CLUSTER_NAME" }}{{ if ne $clustername "" }}cluster.name: {{ $clustername }}{{ end }}
 #
 # ------------------------------------ Node ------------------------------------
 #
 # Use a descriptive name for the node:
 #
 # node.name: node-1
-{{$nodename := env "ES_NODE_NAME"}}{{ if ne $nodename "" }}node.name: {{ $nodename }}{{ end }}
+{{ $nodename := env "ES_NODE_NAME" }}{{ if ne $nodename "" }}node.name: {{ $nodename }}{{ end }}
 #
 # Add custom attributes to the node:
 #
@@ -56,7 +56,9 @@ bootstrap.mlockall: {{ env "ES_MLOCKALL" }}
 #
 # Set the bind address to a specific IP (IPv4 or IPv6):
 #
-network.host: 0.0.0.0
+#network.host: 0.0.0.0
+{{ $nethost := env "ES_NET_HOST" }}{{ if ne $nethost "" }}network.host: {{ $nethost }}{{ else }}# network.host: _local_{{ end }}
+{{ $netpub := env "ES_PUB_IP" }}{{ if ne $netpub "" }}network.publish_host: {{ $netpub }}{{ else }}# network.publish_host: {{ end }}
 #
 # Set a custom port for HTTP:
 #
@@ -71,7 +73,7 @@ network.host: 0.0.0.0
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
 # discovery.zen.ping.unicast.hosts: ["host1", "host2"]
-discovery.zen.ping.unicast.hosts: [{{range $i, $e := service "elasticsearch" "any"}}{{ if ne $i 0}},{{ end }}"{{ .Address }}"{{ end }}]
+discovery.zen.ping.unicast.hosts: [{{ range $i, $e := service "elasticsearch" "any" }}{{ if ne $i 0 }},{{ end }}"{{ .Address }}"{{ end }}]
 #
 # Prevent the "split brain" by configuring the majority of nodes (total number of nodes / 2 + 1):
 #
