@@ -41,5 +41,5 @@ EXPOSE 9200 9300
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-HEALTHCHECK --interval=5s --timeout=10s --retries=30 CMD /usr/local/bin/healthcheck.sh
+HEALTHCHECK --interval=5s --timeout=5s --retries=300 CMD /usr/local/bin/healthcheck.sh
 
