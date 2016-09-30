@@ -8,7 +8,7 @@ ENV LANG=C.UTF-8 \
     ES_DATA_NODE=true \
     ES_MASTER_NODE=true \
     ES_HEAP_SIZE=512m \
-    ES_NET_HOST=0.0.0.0 \
+    ES_HOST=0.0.0.0 \
     ES_PATH_DATA=/opt/elasticsearch/data/ \
     ES_PATH_LOGS=/opt/elasticsearch/logs/ \
     ES_MLOCKALL=true
@@ -16,7 +16,7 @@ ENV LANG=C.UTF-8 \
 RUN apk update && apk upgrade && \
     apk add openjdk8-jre="$JAVA_ALPINE_VERSION" && \
     apk add curl nmap && \
-    curl -sL ${ES_URL}/${ES_VER}/elasticsearch-${ES_VER}.tar.gz |tar xfz - -C /opt/ && \
+    curl -sL ${ES_URL}/${ES_VER}/elasticsearch-${ES_VER}.tar.gz | tar xfz - -C /opt/ && \
     mv /opt/elasticsearch-${ES_VER} /opt/elasticsearch && \
     rm -rf /var/cache/apk/* /tmp/*
 
@@ -30,6 +30,7 @@ COPY docker-entrypoint.sh   /usr/local/bin/docker-entrypoint.sh
 COPY start-elasticsearch.sh /usr/local/bin/start-elasticsearch.sh
 COPY healthcheck.sh         /usr/local/bin/healthcheck.sh
 
+RUN rm /etc/consul.d/consul-ui.json
 RUN chown -R elasticsearch:elasticsearch /opt/elasticsearch/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/start-elasticsearch.sh
@@ -38,6 +39,8 @@ RUN chmod +x /usr/local/bin/healthcheck.sh
 RUN /opt/elasticsearch/bin/plugin install mobz/elasticsearch-head
 
 EXPOSE 9200 9300
+
+VOLUME ["/opt/elasticsearch/data/", "/opt/elasticsearch/logs/"]
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
