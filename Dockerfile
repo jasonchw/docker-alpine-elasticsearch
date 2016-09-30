@@ -3,6 +3,7 @@ FROM jasonchw/alpine-consul
 ARG JAVA_ALPINE_VERSION=8.92.14-r1
 ARG ES_VER=2.3.5
 ARG ES_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch
+ARG KOPF_VER=2.0
 
 ENV LANG=C.UTF-8 \
     ES_DATA_NODE=true \
@@ -36,7 +37,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/start-elasticsearch.sh
 RUN chmod +x /usr/local/bin/healthcheck.sh
 
-RUN /opt/elasticsearch/bin/plugin install mobz/elasticsearch-head
+RUN /opt/elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/${KOPF_VER}
 
 EXPOSE 9200 9300
 
