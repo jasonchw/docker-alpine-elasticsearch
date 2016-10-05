@@ -16,13 +16,14 @@ ENV LANG=C.UTF-8 \
 
 RUN apk update && apk upgrade && \
     apk add openjdk8-jre="$JAVA_ALPINE_VERSION" && \
-    apk add curl nmap && \
     curl -sL ${ES_URL}/${ES_VER}/elasticsearch-${ES_VER}.tar.gz | tar xfz - -C /opt/ && \
-    mv /opt/elasticsearch-${ES_VER} /opt/elasticsearch && \
-    rm -rf /var/cache/apk/* /tmp/*
-
-RUN addgroup elasticsearch && \
-    adduser -S -G elasticsearch elasticsearch
+    mv /opt/elasticsearch-${ES_VER} /opt/elasticsearch && \ 
+    /opt/elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/${KOPF_VER} && \
+    rm -rf /var/cache/apk/* /tmp/* && \
+    rm /etc/consul.d/consul-ui.json && \
+    addgroup elasticsearch && \
+    adduser -S -G elasticsearch elasticsearch && \
+    chown -R elasticsearch:elasticsearch /opt/elasticsearch/
 
 COPY etc/consul.d/elasticsearch.json              /etc/consul.d/
 COPY etc/consul-templates/elasticsearch.yml.ctmpl /etc/consul-templates/elasticsearch.yml.ctmpl
@@ -31,13 +32,9 @@ COPY docker-entrypoint.sh   /usr/local/bin/docker-entrypoint.sh
 COPY start-elasticsearch.sh /usr/local/bin/start-elasticsearch.sh
 COPY healthcheck.sh         /usr/local/bin/healthcheck.sh
 
-RUN rm /etc/consul.d/consul-ui.json
-RUN chown -R elasticsearch:elasticsearch /opt/elasticsearch/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/start-elasticsearch.sh
-RUN chmod +x /usr/local/bin/healthcheck.sh
-
-RUN /opt/elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/${KOPF_VER}
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && \
+    chmod +x /usr/local/bin/start-elasticsearch.sh && \
+    chmod +x /usr/local/bin/healthcheck.sh
 
 EXPOSE 9200 9300
 
