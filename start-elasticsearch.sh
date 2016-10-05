@@ -8,7 +8,7 @@ if [ -z ${ES_NODE_NAME} ]; then
 fi
 
 if [ "X${ES_PUB_HOST}" == "X" ]; then
-    export ES_PUB_HOST=$(ip -o -4 add | egrep '16|24' | head -n1 | egrep -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+    export ES_PUB_HOST=$(ip -o -4 addr list ${CONSUL_BIND_INTERFACE} | head -n1 | awk '{print $4}' | cut -d/ -f1)
 fi
 
 set -- gosu elasticsearch ${ES_BIN}
