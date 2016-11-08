@@ -1,7 +1,7 @@
-FROM jasonchw/alpine-consul
+FROM jasonchw/alpine-consul:0.7.0
 
 ARG JAVA_ALPINE_VERSION=8.92.14-r1
-ARG ES_VER=2.3.5
+ARG ES_VER=2.4.1
 ARG ES_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch
 ARG KOPF_VER=2.0
 
